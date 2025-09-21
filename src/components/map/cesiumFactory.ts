@@ -39,7 +39,9 @@ class CesiumFactory {
                 baseLayerPicker: false,
             })
 
-            viewer.cesiumWidget.creditContainer.style.display = 'none'
+            if (viewer.cesiumWidget.creditContainer instanceof HTMLElement) {
+                viewer.cesiumWidget.creditContainer.style.display = 'none';
+            }
 
             this.cesiumInstance = {
                 viewer,

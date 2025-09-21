@@ -16,7 +16,12 @@
 </template>
 
 <script lang="ts" setup>
-import { ref } from "vue";
+import { ref, onMounted, onUnmounted } from "vue";
+import { useCesium } from "@/components/map/uesCesium";
+// import * as Cesium from "cesium";
+
+const { getEventMoudels } = useCesium();
+
 
 const dataUpdateTime = ref("");
 
@@ -24,6 +29,31 @@ const longitude = ref("");
 
 const latitude = ref("");
 
+onMounted(() => {
+  // 设置鼠标移动 右下角底部 显示经纬度
+  setMouseMove();
+});
+
+
+const setMouseMove = () => {
+    const eventModules = getEventMoudels();
+
+    if (eventModules) {
+
+      eventModules.event.onMouseMoveEvent( (movement) => {
+
+        const position = eventModules.sceneInteraction.screenToCartesian(movement.endPosition)
+
+        if (position) {
+
+          const cartographic = eventModules.sceneInteraction.cartesianToGeographic(position)
+          longitude.value = String(cartographic!.longitude)
+          latitude.value = String(cartographic!.latitude)
+
+        }
+      })
+    }
+}
 
 </script>
 

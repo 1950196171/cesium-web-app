@@ -3,6 +3,12 @@ import CesiumFactory, { type CesiumInstance } from './cesiumFactory';
 import * as Cesium from 'cesium';
 
 import { useCesiumCamera } from './modules/useCesiumCamera';
+// Cesium 公共事件
+import { useCesiumEvent } from './modules/event/useCesiumEvent';
+// Cesium 实体事件
+import { useCesiumEntityInteraction } from './modules/event/useCesiumEntityInteraction';
+// Cesium 场景事件
+import { useCesiumSceneInteraction } from './modules/event/useCesiumSceneInteraction';
 
 
 export const useCesium = (options?: Cesium.Viewer.ConstructorOptions) => {
@@ -39,7 +45,18 @@ export const useCesium = (options?: Cesium.Viewer.ConstructorOptions) => {
 
 
     // 模块化 功能
-    const camera = useCesiumCamera(cesiumInstance.value);
+    const getEventMoudels = () => { 
+        // 优先使用当前实例，如果没有则从工厂获取已存在的实例
+        const instance = cesiumInstance.value || getInstance();
+
+        if (!instance) return null;
+        return {
+            camera: useCesiumCamera(cesiumInstance.value),
+            event: useCesiumEvent(cesiumInstance.value),
+            entityInteraction: useCesiumEntityInteraction(cesiumInstance.value),
+            sceneInteraction: useCesiumSceneInteraction(cesiumInstance.value)
+        }
+    }
 
     return {
         // 基础引用
@@ -53,7 +70,8 @@ export const useCesium = (options?: Cesium.Viewer.ConstructorOptions) => {
         mount,
         unmount,
 
-        // 相机操作
-        camera
+        // 模块化
+        // 事件模块
+        getEventMoudels
     }
 }
