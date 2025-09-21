@@ -1,9 +1,9 @@
 <script lang="ts" setup>
 import { onMounted, onUnmounted, ref } from 'vue'
 import { useCesium } from './uesCesium'
-import { TileMapServiceImageryProvider } from 'cesium'
+// import { TileMapServiceImageryProvider } from 'cesium'
 import 'cesium/Build/Cesium/Widgets/widgets.css'
-
+import { addArcGisMapImageryLayers } from '../../config/mapLayer.config'
 window.CESIUM_BASE_URL = 'node_modules/cesium/Build/Cesium/'
 
 
@@ -16,15 +16,12 @@ onMounted( async () => {
   try {
 
     mount()
-
-    const imageryProvider = await TileMapServiceImageryProvider.fromUrl(
-      'node_modules/cesium/Build/cesium/Assets/Textures/NaturalEarthII'
-    )
-
+    // 加载ArcGis
+    const esri = await addArcGisMapImageryLayers()
     const cesiumInstance = useCesium().getInstance()
 
     if (cesiumInstance) {
-      cesiumInstance.viewer.imageryLayers.addImageryProvider(imageryProvider)
+      cesiumInstance.viewer.imageryLayers.addImageryProvider(esri)
     }
 
   } catch (error) {
